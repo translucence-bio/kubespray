@@ -141,8 +141,7 @@
   shell: "set -o pipefail && tar cfz - -C {{ etcd_cert_dir }} {{ my_etcd_node_certs|join(' ') }} | base64 --wrap=0"
   args:
     executable: /bin/bash
-    warn: false
-  no_log: true
+  no_log: false
   register: etcd_node_certs
   check_mode: no
   delegate_to: "{{ groups['etcd'][0] }}"
@@ -154,7 +153,7 @@
   shell: "set -o pipefail && base64 -d <<< '{{ etcd_node_certs.stdout|quote }}' | tar xz -C {{ etcd_cert_dir }}"
   args:
     executable: /bin/bash
-  no_log: true
+  no_log: false
   changed_when: false
   when: (('calico_rr' in groups and inventory_hostname in groups['calico_rr']) or
         inventory_hostname in groups['k8s_cluster']) and
